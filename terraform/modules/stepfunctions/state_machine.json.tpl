@@ -152,7 +152,13 @@
         "FunctionName": "${lambda_formalize_arn}",
         "Payload.$": "$"
       },
-      "ResultPath": null,
+      "ResultSelector": {
+        "command.$": "$.Payload.command",
+        "params.$": "$.Payload.params",
+        "request_id.$": "$.Payload.request_id",
+        "input_type.$": "$.Payload.input_type"
+      },
+      "ResultPath": "$",
       "Next": "Execute"
     },
 
@@ -163,7 +169,16 @@
         "FunctionName": "${lambda_execute_arn}",
         "Payload.$": "$"
       },
-      "ResultPath": null,
+      "ResultSelector": {
+        "text.$": "$.Payload.text",
+        "voice.$": "$.Payload.voice",
+        "speed.$": "$.Payload.speed",
+        "volume.$": "$.Payload.volume",
+        "pitch.$": "$.Payload.pitch",
+        "format.$": "$.Payload.format",
+        "request_id.$": "$.Payload.request_id"
+      },
+      "ResultPath": "$",
       "Next": "SendToTTS"
     },
 

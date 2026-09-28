@@ -1,0 +1,1 @@
+aws --endpoint-url=http://localhost:4566 lambda invoke --function-name execute-dev --payload fileb://tmp/exec2.json exec2_out.json

@@ -108,7 +108,7 @@ module "lambda" {
 
   environment     = var.environment
   lambda_role_arn = module.iam.lambda_role_arn
-  build_dir       = "${path.module}/../../build"
+  build_dir       = "${path.module}/../../../build"
 
   functions = {
     ingest = {

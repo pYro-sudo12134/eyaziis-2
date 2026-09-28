@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 from shared.config import config
 from shared.ollama_client import ollama
 from shared.qdrant_client import qdrant
@@ -7,13 +8,16 @@ from shared.qdrant_client import qdrant
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-SYSTEM_PROMPT = """Ты — помощник по литературе. Отвечай кратко (1-10 предложений).
-Верни ответ в формате JSON:
+SYSTEM_PROMPT = """Ты — помощник по литературе. Отвечай кратко (1-3 предложения).
+Верни ответ СТРОГО в формате JSON:
 {"text": "твой ответ"}
 
-Не указывай voice, speed, volume, pitch, format — они будут добавлены системой.
+ВАЖНО:
+- Только JSON, без пояснений
+- Не используй кавычки внутри text
+- Экранируй специальные символы
 
-Отвечай ТОЛЬКО JSON."""
+Не указывай voice, speed, volume, pitch, format."""
 
 
 def lambda_handler(event, context):
@@ -32,11 +36,14 @@ def lambda_handler(event, context):
     rag_context = ""
     try:
         query_vec = ollama.embed(question)
-        hits = qdrant.search(query_vec, top_k=3)
-        rag_context = "\n".join(h["payload"].get("text", "") for h in hits)
+        hits = qdrant.search(query_vec, top_k=2)
+        rag_context = "\n".join(
+            h["payload"].get("text", "")[:300]
+            for h in hits
+        )
         logger.info(f"RAG: found {len(hits)} documents")
     except Exception as e:
-        logger.warning(f"RAG failed: {e}, continuing without context")
+        logger.warning(f"RAG failed: {e}")
     
     user_prompt = question
     if rag_context:
@@ -50,14 +57,28 @@ def lambda_handler(event, context):
                 {"role": "user", "content": user_prompt},
             ],
             format="json",
-            temperature=0.7,
+            temperature=0.3,
         )
         parsed = json.loads(raw)
+    except json.JSONDecodeError as e:
+        logger.warning(f"JSON invalid: {e}")
+        text = extract_text(raw) if 'raw' in locals() else question
+        parsed = {"text": text}
     except Exception as e:
-        logger.warning(f"LLM failed: {e}, using fallback")
+        logger.warning(f"LLM failed: {e}")
         parsed = {"text": question}
+
+    logger.info(f"RAG context (first 500 chars): {rag_context[:500]}")
+    logger.info(f"User prompt (first 500 chars): {user_prompt[:500]}")
     
     return build_answer(parsed.get("text", ""), event, params, parsed)
+
+
+def extract_text(raw):
+    match = re.search(r'"text"\s*:\s*"([^"]+)"', raw)
+    if match:
+        return match.group(1)
+    return raw.strip()
 
 
 def build_answer(text, event, params, parsed=None):

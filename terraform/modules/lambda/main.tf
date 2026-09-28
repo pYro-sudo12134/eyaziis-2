@@ -13,6 +13,11 @@ resource "aws_lambda_function" "this" {
   environment {
     variables = each.value.environment
   }
+
+  timeouts {
+    create = "5m"
+    update = "5m"
+  }
 }
 
 resource "aws_lambda_permission" "apigw" {

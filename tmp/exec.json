@@ -1,0 +1,5 @@
+{
+  "command": "ask",
+  "params": {"question": "расскажи про Пушкина"},
+  "request_id": "test-execute-001"
+}

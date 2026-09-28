@@ -32,7 +32,7 @@ variable "environment" {
 }
 
 variable "ollama_url" {
-  default = "http://ollama:11434"
+  default = "http://ollama1:11435"
 }
 
 variable "ollama_formalize_model" {

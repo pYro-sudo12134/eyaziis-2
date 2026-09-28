@@ -20,7 +20,7 @@ class Config:
     
     STATE_MACHINE_ARN = os.getenv("STATE_MACHINE_ARN", "")
     
-    OLLAMA_URL = os.getenv("OLLAMA_URL", "http://ollama:11434")
+    OLLAMA_URL = os.getenv("OLLAMA_URL", "http://ollama1:11434")
     OLLAMA_FORMALIZE_MODEL = os.getenv("OLLAMA_FORMALIZE_MODEL", "qwen2.5:0.5b")
     OLLAMA_EXECUTE_MODEL = os.getenv("OLLAMA_EXECUTE_MODEL", "qwen2.5:3b")
     OLLAMA_EMBED_MODEL = os.getenv("OLLAMA_EMBED_MODEL", "nomic-embed-text")

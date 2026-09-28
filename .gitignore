@@ -2,3 +2,9 @@ build
 *.pyc
 .terraform
 .terraform.lock.hcl
+terraform.tfvars
+*.mp3
+*.tfstate
+*.backup
+*.json
+!tmp/*
