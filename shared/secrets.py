@@ -17,7 +17,6 @@ _cache = {}
 
 
 def get_secret(secret_name: str) -> dict:
-    """Читает секрет из Secrets Manager с кешированием."""
     if not config.SECRETS_MANAGER_ENABLED:
         logger.info(f"Secrets Manager disabled, skipping: {secret_name}")
         return {}
@@ -44,7 +43,6 @@ def get_secret(secret_name: str) -> dict:
 
 
 def get_qdrant_api_key() -> str:
-    """Возвращает Qdrant API key из Secrets Manager, если он есть."""
     if not config.QDRANT_API_KEY_SECRET:
         return ""
     secret = get_secret(config.QDRANT_API_KEY_SECRET)

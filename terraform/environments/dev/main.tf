@@ -49,7 +49,6 @@ module "ssm" {
 module "s3" {
   source = "../../modules/s3"
 
-  environment = var.environment
   buckets = {
     audio_input  = "audio-input-${var.environment}"
     audio_output = "audio-output-${var.environment}"

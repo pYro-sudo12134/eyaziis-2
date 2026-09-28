@@ -16,7 +16,6 @@ _cache = {}
 
 
 def get_parameter(name: str) -> str:
-    """Читает SSM-параметр с кешированием."""
     if name in _cache:
         return _cache[name]
 
