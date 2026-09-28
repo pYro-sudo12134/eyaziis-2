@@ -1,0 +1,53 @@
+version: "3.9"
+
+services:
+  tts-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tts-service
+    ports:
+      - "8001:8000"
+    volumes:
+      - tts-voices:/app/voices
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - CACHE_TTL_SECONDS=3600
+      - RATE_LIMIT_REQUESTS=10
+      - RATE_LIMIT_WINDOW=60
+      - CORS_ORIGINS=http://localhost:3000,http://localhost:8080
+    networks:
+      - tts-network
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  redis:
+    image: redis:7-alpine
+    container_name: tts-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - tts-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  tts-voices:
+  redis-data:
+
+networks:
+  tts-network:
+    driver: bridge
