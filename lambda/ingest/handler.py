@@ -4,6 +4,7 @@ import uuid
 import logging
 from shared.config import config
 from shared.aws_clients import get_s3_client, get_sqs_client
+from shared.requests_db import create_request
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -36,6 +37,7 @@ def handle_text(event):
         return response(400, {"error": "text is required"})
     
     request_id = str(uuid.uuid4())
+    create_request(request_id, "text")
     
     message = {
         "request_id": request_id,
@@ -65,6 +67,8 @@ def handle_audio(event):
         return response(400, {"error": "audio is required"})
     
     request_id = str(uuid.uuid4())
+    create_request(request_id, "audio")
+    
     audio_bytes = base64.b64decode(audio_b64)
     s3_key = f"{request_id}.wav"
     

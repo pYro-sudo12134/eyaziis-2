@@ -2,11 +2,13 @@ import json
 import logging
 from shared.config import config
 from shared.aws_clients import get_s3_client
+from shared.requests_db import get_request
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 s3 = get_s3_client()
+
 
 def lambda_handler(event, context):
     path_params = event.get("pathParameters") or {}
@@ -15,33 +17,44 @@ def lambda_handler(event, context):
     if not request_id:
         return response(400, {"error": "request_id is required"})
     
-    for fmt in ["mp3", "wav", "ogg"]:
-        key = f"{request_id}.{fmt}"
-        try:
-            s3.head_object(Bucket=config.S3_AUDIO_OUTPUT, Key=key)
-        except Exception:
-            continue
-        
-        url = s3.generate_presigned_url(
-            "get_object",
-            Params={"Bucket": config.S3_AUDIO_OUTPUT, "Key": key},
-            ExpiresIn=3600,
-        )
-
-        if config.AWS_ENDPOINT_URL != config.AWS_EXTERNAL_ENDPOINT:
-            url = url.replace(config.AWS_ENDPOINT_URL, config.AWS_EXTERNAL_ENDPOINT)
-        
-        logger.info(f"Result found: {key}")
+    item = get_request(request_id)
+    
+    if not item:
+        return response(404, {"error": "request not found"})
+    
+    status = item.get("status", {}).get("S", "UNKNOWN")
+    
+    if status == "IN_PROGRESS":
         return response(200, {
             "request_id": request_id,
-            "status": "COMPLETED",
-            "audio_url": url,
-            "format": fmt,
+            "status": "IN_PROGRESS",
         })
     
+    if status == "FAILED":
+        return response(200, {
+            "request_id": request_id,
+            "status": "FAILED",
+            "error": item.get("error", {}).get("S", "unknown error"),
+        })
+    
+    s3_key = item["s3_key"]["S"]
+    fmt = item.get("format", {}).get("S", "mp3")
+    
+    url = s3.generate_presigned_url(
+        "get_object",
+        Params={"Bucket": config.S3_AUDIO_OUTPUT, "Key": s3_key},
+        ExpiresIn=3600,
+    )
+    
+    if config.AWS_ENDPOINT_URL != config.AWS_EXTERNAL_ENDPOINT:
+        url = url.replace(config.AWS_ENDPOINT_URL, config.AWS_EXTERNAL_ENDPOINT)
+    
+    logger.info(f"Result ready: {request_id}")
     return response(200, {
         "request_id": request_id,
-        "status": "IN_PROGRESS",
+        "status": "COMPLETED",
+        "audio_url": url,
+        "format": fmt,
     })
 
 

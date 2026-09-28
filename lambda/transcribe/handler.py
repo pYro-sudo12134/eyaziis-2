@@ -3,6 +3,7 @@ import logging
 from urllib.parse import urlparse
 from shared.config import config
 from shared.aws_clients import get_transcribe_client, get_s3_client
+from shared.requests_db import mark_failed
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -21,13 +22,17 @@ def lambda_handler(event, context):
         return check_transcription(event)
     elif action == "parse":
         return parse_transcript(event)
+    elif action == "mark_failed":
+        mark_failed(event["request_id"], event.get("error", "unknown"))
+        return {"status": "ok"}
     else:
         raise ValueError(f"Unknown action: {action}")
 
 
 def start_transcription(event):
     s3_uri = event["s3_uri"]
-    job_name = f"job-{event['request_id']}"
+    request_id = event["request_id"]
+    job_name = f"job-{request_id}"
     
     logger.info(f"Starting transcription: {job_name}, uri={s3_uri}")
     
@@ -41,6 +46,7 @@ def start_transcription(event):
     
     return {
         "job_name": job_name,
+        "request_id": request_id,
         "status": "IN_PROGRESS",
         "attempts": 0,
     }
@@ -48,6 +54,7 @@ def start_transcription(event):
 
 def check_transcription(event):
     job_name = event["job_name"]
+    request_id = event.get("request_id", "")
     attempts = event.get("attempts", 0) + 1
     
     response = transcribe.get_transcription_job(TranscriptionJobName=job_name)
@@ -57,18 +64,23 @@ def check_transcription(event):
     
     result = {
         "job_name": job_name,
+        "request_id": request_id,
         "status": status,
         "attempts": attempts,
     }
     
     if status == "COMPLETED":
         result["transcript_uri"] = response["TranscriptionJob"]["Transcript"]["TranscriptFileUri"]
+    elif status == "FAILED":
+        mark_failed(request_id, "Transcription job failed")
+        result["error"] = "Transcription failed"
     
     return result
 
 
 def parse_transcript(event):
     job_name = event["job_name"]
+    request_id = event.get("request_id", "")
     
     response = transcribe.get_transcription_job(TranscriptionJobName=job_name)
     transcript_uri = response["TranscriptionJob"]["Transcript"]["TranscriptFileUri"]
@@ -81,11 +93,13 @@ def parse_transcript(event):
     text = data["results"]["transcripts"][0]["transcript"]
     logger.info(f"Parsed transcript: {text[:100]}...")
     
-    return {"text": text}
+    return {
+        "text": text,
+        "request_id": request_id,
+    }
 
 
 def parse_s3_uri(uri: str) -> tuple[str, str]:
-    """Поддерживает s3://bucket/key и https://s3.amazonaws.com/bucket/key."""
     if uri.startswith("s3://"):
         parsed = urlparse(uri)
         return parsed.netloc, parsed.path.lstrip("/")

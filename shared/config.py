@@ -6,6 +6,8 @@ class Config:
     AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
     AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID", "test")
     AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY", "test")
+
+    DYNAMODB_REQUESTS_TABLE = os.getenv("DYNAMODB_REQUESTS_TABLE", "requests")
     
     SQS_INPUT_URL = os.getenv("SQS_INPUT_URL", "")
     SQS_TTS_URL = os.getenv("SQS_TTS_URL", "")

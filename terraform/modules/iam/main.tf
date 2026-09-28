@@ -64,6 +64,15 @@ resource "aws_iam_role_policy" "lambda_policy" {
           "logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"
         ]
         Resource = ["*"]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "dynamodb:PutItem",
+          "dynamodb:GetItem",
+          "dynamodb:UpdateItem",
+        ]
+        Resource = [var.dynamodb_table_arn]
       }
     ]
   })

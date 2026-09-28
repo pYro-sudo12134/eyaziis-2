@@ -43,6 +43,7 @@
         "Payload": {
           "action": "check",
           "job_name.$": "$.transcription.job_name",
+          "request_id.$": "$.transcription.request_id",
           "attempts.$": "$.transcription.attempts"
         }
       },
@@ -79,7 +80,8 @@
         "FunctionName": "${lambda_transcribe_arn}",
         "Payload": {
           "action": "parse",
-          "job_name.$": "$.transcription.job_name"
+          "job_name.$": "$.transcription.job_name",
+          "request_id.$": "$.transcription.request_id"
         }
       },
       "ResultPath": "$.transcription",
@@ -102,13 +104,45 @@
     },
 
     "TranscriptionFailed": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${lambda_transcribe_arn}",
+        "Payload": {
+          "action": "mark_failed",
+          "request_id.$": "$.transcription.request_id",
+          "error": "Transcription job failed"
+        }
+      },
+      "ResultPath": null,
+      "Next": "TranscriptionFailedFinal"
+    },
+
+    "TranscriptionFailedFinal": {
       "Type": "Fail",
-      "Error": "TranscriptionFailed"
+      "Error": "TranscriptionFailed",
+      "Cause": "Transcribe job failed"
     },
 
     "TranscriptionTimeout": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${lambda_transcribe_arn}",
+        "Payload": {
+          "action": "mark_failed",
+          "request_id.$": "$.transcription.request_id",
+          "error": "Transcription timeout"
+        }
+      },
+      "ResultPath": null,
+      "Next": "TranscriptionTimeoutFinal"
+    },
+
+    "TranscriptionTimeoutFinal": {
       "Type": "Fail",
-      "Error": "TranscriptionTimeout"
+      "Error": "TranscriptionTimeout",
+      "Cause": "Transcribe job did not complete in time"
     },
 
     "Formalize": {

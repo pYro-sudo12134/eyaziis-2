@@ -27,6 +27,7 @@ provider "aws" {
     transcribe     = var.aws_endpoint_url
     secretsmanager = var.aws_endpoint_url
     ssm            = var.aws_endpoint_url
+    dynamodb       = var.aws_endpoint_url
   }
 
   s3_use_path_style = true
@@ -78,6 +79,7 @@ module "iam" {
   s3_bucket_arns    = values(module.s3.bucket_arns)
   sqs_queue_arns    = values(module.sqs.queue_arns)
   secrets_arns      = values(module.secretsmanager.secret_arns)
+  dynamodb_table_arn = module.dynamodb.table_arn
 }
 
 # === Secrets Manager ===
@@ -91,6 +93,13 @@ module "secretsmanager" {
       value       = jsonencode({ api_key = var.qdrant_api_key })
     }
   }
+}
+
+# === DynamoDB ===
+module "dynamodb" {
+  source = "../../modules/dynamodb"
+
+  environment = var.environment
 }
 
 # === Lambda ===
@@ -112,6 +121,7 @@ module "lambda" {
         AWS_REGION            = var.aws_region
         SQS_INPUT_URL         = module.sqs.queue_urls["input"]
         S3_AUDIO_INPUT        = module.s3.bucket_names["audio_input"]
+        DYNAMODB_REQUESTS_TABLE = module.dynamodb.table_name
       }
     }
     dispatcher = {
@@ -122,6 +132,7 @@ module "lambda" {
         AWS_ENDPOINT_URL   = var.aws_internal_endpoint
         AWS_REGION         = var.aws_region
         ENVIRONMENT        = var.environment
+        DYNAMODB_REQUESTS_TABLE = module.dynamodb.table_name
       }
     }
     transcribe = {
@@ -133,6 +144,7 @@ module "lambda" {
         AWS_REGION           = var.aws_region
         S3_TRANSCRIPTS       = module.s3.bucket_names["transcripts"]
         TRANSCRIBE_LANGUAGE  = var.transcribe_language
+        DYNAMODB_REQUESTS_TABLE = module.dynamodb.table_name
       }
     }
     formalize = {
@@ -171,6 +183,7 @@ module "lambda" {
         TTS_SERVICE_URL    = var.tts_service_url
         S3_AUDIO_OUTPUT    = module.s3.bucket_names["audio_output"]
         SQS_OUTPUT_URL     = module.sqs.queue_urls["output"]
+        DYNAMODB_REQUESTS_TABLE = module.dynamodb.table_name
       }
     }
     get_result = {
@@ -182,6 +195,7 @@ module "lambda" {
         AWS_EXTERNAL_ENDPOINT = var.aws_external_endpoint
         AWS_REGION            = var.aws_region
         S3_AUDIO_OUTPUT       = module.s3.bucket_names["audio_output"]
+        DYNAMODB_REQUESTS_TABLE = module.dynamodb.table_name
       }
     }
     index_documents = {

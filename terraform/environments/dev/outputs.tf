@@ -17,3 +17,7 @@ output "sqs_queues" {
 output "lambda_functions" {
   value = module.lambda.function_arns
 }
+
+output "dynamodb_table" {
+  value = module.dynamodb.table_name
+}

@@ -33,3 +33,7 @@ def get_transcribe_client():
 
 def get_secrets_client():
     return boto3.client("secretsmanager", **_common_kwargs)
+
+
+def get_dynamodb_client():
+    return boto3.client("dynamodb", **_common_kwargs)
