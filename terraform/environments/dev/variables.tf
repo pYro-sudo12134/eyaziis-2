@@ -1,85 +1,85 @@
 variable "aws_region" {
-  type = string
+  type    = string
   default = "us-east-1"
 }
 
 variable "aws_access_key_id" {
-  type = string
+  type      = string
   default   = "test"
   sensitive = true
 }
 
 variable "aws_secret_access_key" {
-  type = string
+  type      = string
   default   = "test"
   sensitive = true
 }
 
 variable "aws_endpoint_url" {
-  type = string
+  type        = string
   description = "LocalStack endpoint из хоста"
   default     = "http://localhost:4566"
 }
 
 variable "aws_internal_endpoint" {
-  type = string
+  type        = string
   description = "LocalStack endpoint внутри Docker-сети"
   default     = "http://localstack:4566"
 }
 
 variable "aws_external_endpoint" {
-  type = string
+  type        = string
   description = "LocalStack endpoint для клиента"
   default     = "http://localhost:4566"
 }
 
 variable "environment" {
-  type = string
+  type    = string
   default = "dev"
 }
 
 variable "ollama_url" {
-  type = string
+  type    = string
   default = "http://ollama1:11435"
 }
 
 variable "ollama_formalize_model" {
-  type = string
+  type    = string
   default = "qwen2.5:0.5b"
 }
 
 variable "ollama_execute_model" {
-  type = string
+  type    = string
   default = "qwen2.5:3b"
 }
 
 variable "ollama_embed_model" {
-  type = string
+  type    = string
   default = "nomic-embed-text"
 }
 
 variable "qdrant_url" {
-  type = string
+  type    = string
   default = "http://qdrant:6333"
 }
 
 variable "qdrant_collection" {
-  type = string
+  type    = string
   default = "literature"
 }
 
 variable "qdrant_api_key" {
-  type = string
+  type      = string
   default   = ""
   sensitive = true
 }
 
 variable "tts_service_url" {
-  type = string
+  type    = string
   default = "http://tts-service:8000"
 }
 
 variable "transcribe_language" {
-  type = string
+  type    = string
   default = "ru-RU"
 }

@@ -19,9 +19,7 @@ class Settings:
     def _api_url(self, path: str) -> str:
         if not self.API_ID:
             raise RuntimeError("API_ID is not configured")
-        return (
-            f"{self.API_GATEWAY_URL}/restapis/{self.API_ID}/{self.API_STAGE}/_user_request_/{path}"
-        )
+        return f"{self.API_GATEWAY_URL}/restapis/{self.API_ID}/{self.API_STAGE}/_user_request_/{path}"
 
     @property
     def ask_url(self) -> str:

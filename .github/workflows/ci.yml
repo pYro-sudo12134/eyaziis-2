@@ -94,5 +94,14 @@ jobs:
       - name: TFLint
         working-directory: terraform
         run: |
-          tflint --init
-          tflint --recursive
+          tflint --init --config=${{ github.workspace }}/.tflint.hcl
+          tflint --config=${{ github.workspace }}/.tflint.hcl --chdir=environments/dev
+          tflint --config=${{ github.workspace }}/.tflint.hcl --chdir=modules/apigateway
+          tflint --config=${{ github.workspace }}/.tflint.hcl --chdir=modules/dynamodb
+          tflint --config=${{ github.workspace }}/.tflint.hcl --chdir=modules/iam
+          tflint --config=${{ github.workspace }}/.tflint.hcl --chdir=modules/lambda
+          tflint --config=${{ github.workspace }}/.tflint.hcl --chdir=modules/s3
+          tflint --config=${{ github.workspace }}/.tflint.hcl --chdir=modules/secretsmanager
+          tflint --config=${{ github.workspace }}/.tflint.hcl --chdir=modules/sqs
+          tflint --config=${{ github.workspace }}/.tflint.hcl --chdir=modules/ssm
+          tflint --config=${{ github.workspace }}/.tflint.hcl --chdir=modules/stepfunctions

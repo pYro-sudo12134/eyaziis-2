@@ -26,7 +26,10 @@ class RateLimiter:
         if count > settings.RATE_LIMIT_REQUESTS:
             raise HTTPException(
                 status_code=429,
-                detail=f"Rate limit exceeded: {settings.RATE_LIMIT_REQUESTS} requests per {settings.RATE_LIMIT_WINDOW}s",
+                detail=(
+                    f"Rate limit exceeded: {settings.RATE_LIMIT_REQUESTS} "
+                    f"requests per {settings.RATE_LIMIT_WINDOW}s"
+                ),
                 headers={"Retry-After": str(settings.RATE_LIMIT_WINDOW)},
             )
 
