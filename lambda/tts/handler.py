@@ -1,8 +1,10 @@
 import json
 import logging
+
 import requests
-from shared.config import config
+
 from shared.aws_clients import get_s3_client, get_sqs_client
+from shared.config import config
 from shared.requests_db import mark_completed, mark_failed
 
 logger = logging.getLogger()
@@ -65,9 +67,7 @@ def process(message):
 
     mark_completed(request_id, s3_key, fmt, text=text)
 
-    logger.info(
-        f"TTS done: s3://{config.S3_AUDIO_OUTPUT}/{s3_key}, size={len(audio_bytes)}"
-    )
+    logger.info(f"TTS done: s3://{config.S3_AUDIO_OUTPUT}/{s3_key}, size={len(audio_bytes)}")
 
     sqs.send_message(
         QueueUrl=config.SQS_OUTPUT_URL,

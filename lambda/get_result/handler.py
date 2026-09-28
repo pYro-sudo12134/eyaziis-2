@@ -1,7 +1,8 @@
 import json
 import logging
-from shared.config import config
+
 from shared.aws_clients import get_s3_client
+from shared.config import config
 from shared.requests_db import get_request
 
 logger = logging.getLogger()

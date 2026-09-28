@@ -1,8 +1,9 @@
 import json
 import logging
 from urllib.parse import urlparse
+
+from shared.aws_clients import get_s3_client, get_transcribe_client
 from shared.config import config
-from shared.aws_clients import get_transcribe_client, get_s3_client
 from shared.requests_db import mark_failed
 
 logger = logging.getLogger()
@@ -72,9 +73,7 @@ def check_transcription(event):
     }
 
     if status == "COMPLETED":
-        result["transcript_uri"] = response["TranscriptionJob"]["Transcript"][
-            "TranscriptFileUri"
-        ]
+        result["transcript_uri"] = response["TranscriptionJob"]["Transcript"]["TranscriptFileUri"]
     elif status == "FAILED":
         mark_failed(request_id, "Transcription job failed")
         result["error"] = "Transcription failed"

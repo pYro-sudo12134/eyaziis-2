@@ -1,5 +1,6 @@
 import boto3
 from botocore.config import Config as BotoConfig
+
 from shared.config import config
 
 _boto_config = BotoConfig(

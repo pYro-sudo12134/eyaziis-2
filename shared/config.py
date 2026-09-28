@@ -36,9 +36,7 @@ class Config:
     TRANSCRIBE_POLL_INTERVAL = int(os.getenv("TRANSCRIBE_POLL_INTERVAL", "5"))
     TRANSCRIBE_MAX_ATTEMPTS = int(os.getenv("TRANSCRIBE_MAX_ATTEMPTS", "60"))
 
-    SECRETS_MANAGER_ENABLED = (
-        os.getenv("SECRETS_MANAGER_ENABLED", "true").lower() == "true"
-    )
+    SECRETS_MANAGER_ENABLED = os.getenv("SECRETS_MANAGER_ENABLED", "true").lower() == "true"
     ENVIRONMENT = os.getenv("ENVIRONMENT", "dev")
     STATE_MACHINE_ARN_PARAM = os.getenv(
         "STATE_MACHINE_ARN_PARAM", f"/pipeline/{ENVIRONMENT}/state_machine_arn"

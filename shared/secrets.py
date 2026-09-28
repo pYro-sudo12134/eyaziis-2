@@ -1,7 +1,9 @@
 import json
 import logging
+
 import boto3
 from botocore.config import Config as BotoConfig
+
 from shared.config import config
 
 logger = logging.getLogger(__name__)

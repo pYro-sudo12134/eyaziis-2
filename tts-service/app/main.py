@@ -1,12 +1,13 @@
-from fastapi import FastAPI, HTTPException, Response, Request, Depends
-from fastapi.middleware.cors import CORSMiddleware
-from app.models import SynthesizeRequest, VoicesResponse, VoiceInfo
-from app.tts import piper_tts
-from app.cache import cache
-from app.rate_limit import rate_limiter
-from app.config import settings
-from app.voices import VOICES_METADATA, SUPPORTED_FORMATS
 import logging
+
+from app.cache import cache
+from app.config import settings
+from app.models import SynthesizeRequest, VoiceInfo, VoicesResponse
+from app.rate_limit import rate_limiter
+from app.tts import piper_tts
+from app.voices import SUPPORTED_FORMATS, VOICES_METADATA
+from fastapi import FastAPI, HTTPException, Request, Response
+from fastapi.middleware.cors import CORSMiddleware
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

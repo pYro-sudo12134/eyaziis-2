@@ -1,12 +1,11 @@
-from pydantic import BaseModel, Field
-from typing import Optional
+from pydantic import BaseModel
 
 
 class IngestMessage(BaseModel):
     request_id: str
     input_type: str  # "text" | "audio"
-    text: Optional[str] = None
-    s3_uri: Optional[str] = None
+    text: str | None = None
+    s3_uri: str | None = None
     voice: str = "ru_RU-irina-medium"
     speed: float = 1.0
     volume: float = 1.0

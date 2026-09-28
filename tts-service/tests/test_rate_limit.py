@@ -1,10 +1,10 @@
 import time
-import pytest
 from unittest.mock import MagicMock
-from fastapi import HTTPException
 
-from app.rate_limit import RateLimiter
+import pytest
 from app.config import settings
+from app.rate_limit import RateLimiter
+from fastapi import HTTPException
 
 
 def make_request(ip="1.2.3.4"):

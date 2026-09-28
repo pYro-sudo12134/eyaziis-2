@@ -1,6 +1,7 @@
 import json
 import logging
 import re
+
 from shared.config import config
 from shared.ollama_client import ollama
 from shared.qdrant_client import qdrant

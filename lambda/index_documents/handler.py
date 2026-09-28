@@ -1,10 +1,10 @@
-import json
 import logging
 import uuid
+
+from shared.aws_clients import get_s3_client
 from shared.config import config
 from shared.ollama_client import ollama
 from shared.qdrant_client import qdrant
-from shared.aws_clients import get_s3_client
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)

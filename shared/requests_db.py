@@ -1,7 +1,8 @@
-import time
 import logging
-from shared.config import config
+import time
+
 from shared.aws_clients import get_dynamodb_client
+from shared.config import config
 
 logger = logging.getLogger(__name__)
 

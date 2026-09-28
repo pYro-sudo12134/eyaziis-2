@@ -1,9 +1,10 @@
-import json
 import base64
-import uuid
+import json
 import logging
-from shared.config import config
+import uuid
+
 from shared.aws_clients import get_s3_client, get_sqs_client
+from shared.config import config
 from shared.requests_db import create_request
 
 logger = logging.getLogger()

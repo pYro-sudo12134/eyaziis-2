@@ -1,7 +1,8 @@
 import time
+
 import redis.asyncio as redis
-from fastapi import HTTPException, Request
 from app.config import settings
+from fastapi import HTTPException, Request
 
 
 class RateLimiter:

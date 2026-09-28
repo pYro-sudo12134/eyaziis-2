@@ -1,9 +1,9 @@
 import json
 import logging
-from shared.config import config
+
 from shared.aws_clients import get_sfn_client
-from shared.ssm import get_state_machine_arn
 from shared.requests_db import mark_failed
+from shared.ssm import get_state_machine_arn
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)

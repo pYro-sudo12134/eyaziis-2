@@ -2,14 +2,13 @@ import logging
 from contextlib import asynccontextmanager
 
 import httpx
-from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
-from fastapi.responses import HTMLResponse, JSONResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-
 from app.api_client import api_client
 from app.audio import webm_to_wav_base64
 from app.config import settings
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

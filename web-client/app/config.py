@@ -20,10 +20,7 @@ class Settings:
         if not self.API_ID:
             raise RuntimeError("API_ID is not configured")
         return (
-            f"{self.API_GATEWAY_URL}"
-            f"/restapis/{self.API_ID}"
-            f"/{self.API_STAGE}"
-            f"/_user_request_/{path}"
+            f"{self.API_GATEWAY_URL}/restapis/{self.API_ID}/{self.API_STAGE}/_user_request_/{path}"
         )
 
     @property

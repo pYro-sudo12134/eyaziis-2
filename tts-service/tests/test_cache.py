@@ -22,7 +22,5 @@ def cache():
 )
 def test_key_changes_with_any_parameter(cache, field, new_value):
     """Если параметр забыли включить в payload — тест падает."""
-    base = dict(
-        text="привет", voice="voice-a", speed=1.0, volume=1.0, pitch=1.0, fmt="mp3"
-    )
+    base = {"text": "привет", "voice": "voice-a", "speed": 1.0, "volume": 1.0, "pitch": 1.0, "fmt": "mp3"}
     assert cache._key(**base) != cache._key(**{**base, field: new_value})

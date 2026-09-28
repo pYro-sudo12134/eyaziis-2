@@ -1,5 +1,6 @@
 import json
 import logging
+
 from shared.config import config
 from shared.ollama_client import ollama
 
