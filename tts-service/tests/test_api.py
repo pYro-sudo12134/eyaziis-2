@@ -18,21 +18,26 @@ def test_cache_miss_on_different_params(app_client):
 
 
 def test_voice_not_found_maps_to_400(app_client):
-    with patch("app.main.piper_tts.synthesize",
-               side_effect=FileNotFoundError("Voice not found: nope")):
+    with patch(
+        "app.main.piper_tts.synthesize",
+        side_effect=FileNotFoundError("Voice not found: nope"),
+    ):
         r = app_client.post("/synthesize", json={"text": "x", "voice": "nope"})
     assert r.status_code == 400
 
 
 def test_piper_error_maps_to_500(app_client):
-    with patch("app.main.piper_tts.synthesize",
-               side_effect=RuntimeError("Piper failed: segfault")):
+    with patch(
+        "app.main.piper_tts.synthesize",
+        side_effect=RuntimeError("Piper failed: segfault"),
+    ):
         r = app_client.post("/synthesize", json={"text": "x"})
     assert r.status_code == 500
 
 
 def test_rate_limit_blocks_synthesize(app_client):
     from app.config import settings
+
     with patch("app.main.piper_tts.synthesize", return_value=b"A"):
         for i in range(settings.RATE_LIMIT_REQUESTS):
             app_client.post("/synthesize", json={"text": f"t{i}"})

@@ -65,15 +65,19 @@ def process(message):
 
     mark_completed(request_id, s3_key, fmt, text=text)
 
-    logger.info(f"TTS done: s3://{config.S3_AUDIO_OUTPUT}/{s3_key}, size={len(audio_bytes)}")
+    logger.info(
+        f"TTS done: s3://{config.S3_AUDIO_OUTPUT}/{s3_key}, size={len(audio_bytes)}"
+    )
 
     sqs.send_message(
         QueueUrl=config.SQS_OUTPUT_URL,
-        MessageBody=json.dumps({
-            "request_id": request_id,
-            "status": "COMPLETED",
-            "s3_key": s3_key,
-            "bucket": config.S3_AUDIO_OUTPUT,
-            "format": fmt,
-        }),
+        MessageBody=json.dumps(
+            {
+                "request_id": request_id,
+                "status": "COMPLETED",
+                "s3_key": s3_key,
+                "bucket": config.S3_AUDIO_OUTPUT,
+                "format": fmt,
+            }
+        ),
     )

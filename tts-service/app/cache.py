@@ -14,10 +14,18 @@ class TTSCache:
         return self._client
 
     def _key(self, text, voice, speed, volume, pitch, fmt):
-        payload = json.dumps({
-            "text": text, "voice": voice, "speed": speed,
-            "volume": volume, "pitch": pitch, "format": fmt,
-        }, sort_keys=True, ensure_ascii=False)
+        payload = json.dumps(
+            {
+                "text": text,
+                "voice": voice,
+                "speed": speed,
+                "volume": volume,
+                "pitch": pitch,
+                "format": fmt,
+            },
+            sort_keys=True,
+            ensure_ascii=False,
+        )
         return f"tts:cache:{hashlib.sha256(payload.encode('utf-8')).hexdigest()}"
 
     async def get(self, text, voice, speed, volume, pitch, fmt):

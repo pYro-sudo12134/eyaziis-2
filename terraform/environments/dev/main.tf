@@ -74,11 +74,11 @@ module "sqs" {
 module "iam" {
   source = "../../modules/iam"
 
-  aws_region        = var.aws_region
-  environment       = var.environment
-  s3_bucket_arns    = values(module.s3.bucket_arns)
-  sqs_queue_arns    = values(module.sqs.queue_arns)
-  secrets_arns      = values(module.secretsmanager.secret_arns)
+  aws_region         = var.aws_region
+  environment        = var.environment
+  s3_bucket_arns     = values(module.s3.bucket_arns)
+  sqs_queue_arns     = values(module.sqs.queue_arns)
+  secrets_arns       = values(module.secretsmanager.secret_arns)
   dynamodb_table_arn = module.dynamodb.table_arn
 }
 
@@ -116,11 +116,11 @@ module "lambda" {
       timeout     = 30
       memory_size = 256
       environment = {
-        AWS_ENDPOINT_URL      = var.aws_internal_endpoint
-        AWS_EXTERNAL_ENDPOINT = var.aws_external_endpoint
-        AWS_REGION            = var.aws_region
-        SQS_INPUT_URL         = module.sqs.queue_urls["input"]
-        S3_AUDIO_INPUT        = module.s3.bucket_names["audio_input"]
+        AWS_ENDPOINT_URL        = var.aws_internal_endpoint
+        AWS_EXTERNAL_ENDPOINT   = var.aws_external_endpoint
+        AWS_REGION              = var.aws_region
+        SQS_INPUT_URL           = module.sqs.queue_urls["input"]
+        S3_AUDIO_INPUT          = module.s3.bucket_names["audio_input"]
         DYNAMODB_REQUESTS_TABLE = module.dynamodb.table_name
       }
     }
@@ -129,9 +129,9 @@ module "lambda" {
       timeout     = 30
       memory_size = 256
       environment = {
-        AWS_ENDPOINT_URL   = var.aws_internal_endpoint
-        AWS_REGION         = var.aws_region
-        ENVIRONMENT        = var.environment
+        AWS_ENDPOINT_URL        = var.aws_internal_endpoint
+        AWS_REGION              = var.aws_region
+        ENVIRONMENT             = var.environment
         DYNAMODB_REQUESTS_TABLE = module.dynamodb.table_name
       }
     }
@@ -140,10 +140,10 @@ module "lambda" {
       timeout     = 60
       memory_size = 256
       environment = {
-        AWS_ENDPOINT_URL     = var.aws_internal_endpoint
-        AWS_REGION           = var.aws_region
-        S3_TRANSCRIPTS       = module.s3.bucket_names["transcripts"]
-        TRANSCRIBE_LANGUAGE  = var.transcribe_language
+        AWS_ENDPOINT_URL        = var.aws_internal_endpoint
+        AWS_REGION              = var.aws_region
+        S3_TRANSCRIPTS          = module.s3.bucket_names["transcripts"]
+        TRANSCRIBE_LANGUAGE     = var.transcribe_language
         DYNAMODB_REQUESTS_TABLE = module.dynamodb.table_name
       }
     }
@@ -152,10 +152,10 @@ module "lambda" {
       timeout     = 60
       memory_size = 512
       environment = {
-        AWS_ENDPOINT_URL          = var.aws_internal_endpoint
-        AWS_REGION                = var.aws_region
-        OLLAMA_URL                = var.ollama_url
-        OLLAMA_FORMALIZE_MODEL    = var.ollama_formalize_model
+        AWS_ENDPOINT_URL       = var.aws_internal_endpoint
+        AWS_REGION             = var.aws_region
+        OLLAMA_URL             = var.ollama_url
+        OLLAMA_FORMALIZE_MODEL = var.ollama_formalize_model
       }
     }
     execute = {
@@ -163,14 +163,14 @@ module "lambda" {
       timeout     = 120
       memory_size = 1024
       environment = {
-        AWS_ENDPOINT_URL          = var.aws_internal_endpoint
-        AWS_REGION                = var.aws_region
-        OLLAMA_URL                = var.ollama_url
-        OLLAMA_EXECUTE_MODEL      = var.ollama_execute_model
-        OLLAMA_EMBED_MODEL        = var.ollama_embed_model
-        QDRANT_URL                = var.qdrant_url
-        QDRANT_COLLECTION         = var.qdrant_collection
-        QDRANT_API_KEY_SECRET     = "qdrant_api_key-${var.environment}"
+        AWS_ENDPOINT_URL      = var.aws_internal_endpoint
+        AWS_REGION            = var.aws_region
+        OLLAMA_URL            = var.ollama_url
+        OLLAMA_EXECUTE_MODEL  = var.ollama_execute_model
+        OLLAMA_EMBED_MODEL    = var.ollama_embed_model
+        QDRANT_URL            = var.qdrant_url
+        QDRANT_COLLECTION     = var.qdrant_collection
+        QDRANT_API_KEY_SECRET = "qdrant_api_key-${var.environment}"
       }
     }
     tts = {
@@ -178,11 +178,11 @@ module "lambda" {
       timeout     = 120
       memory_size = 512
       environment = {
-        AWS_ENDPOINT_URL   = var.aws_internal_endpoint
-        AWS_REGION         = var.aws_region
-        TTS_SERVICE_URL    = var.tts_service_url
-        S3_AUDIO_OUTPUT    = module.s3.bucket_names["audio_output"]
-        SQS_OUTPUT_URL     = module.sqs.queue_urls["output"]
+        AWS_ENDPOINT_URL        = var.aws_internal_endpoint
+        AWS_REGION              = var.aws_region
+        TTS_SERVICE_URL         = var.tts_service_url
+        S3_AUDIO_OUTPUT         = module.s3.bucket_names["audio_output"]
+        SQS_OUTPUT_URL          = module.sqs.queue_urls["output"]
         DYNAMODB_REQUESTS_TABLE = module.dynamodb.table_name
       }
     }
@@ -191,10 +191,10 @@ module "lambda" {
       timeout     = 30
       memory_size = 256
       environment = {
-        AWS_ENDPOINT_URL      = var.aws_internal_endpoint
-        AWS_EXTERNAL_ENDPOINT = var.aws_external_endpoint
-        AWS_REGION            = var.aws_region
-        S3_AUDIO_OUTPUT       = module.s3.bucket_names["audio_output"]
+        AWS_ENDPOINT_URL        = var.aws_internal_endpoint
+        AWS_EXTERNAL_ENDPOINT   = var.aws_external_endpoint
+        AWS_REGION              = var.aws_region
+        S3_AUDIO_OUTPUT         = module.s3.bucket_names["audio_output"]
         DYNAMODB_REQUESTS_TABLE = module.dynamodb.table_name
       }
     }

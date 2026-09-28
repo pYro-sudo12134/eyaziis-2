@@ -28,6 +28,7 @@ MEDIA_TYPES = {
     "ogg": "audio/ogg",
 }
 
+
 @app.get("/health")
 async def health():
     try:
@@ -35,11 +36,12 @@ async def health():
         redis_ok = True
     except Exception:
         redis_ok = False
-    
+
     return {
         "status": "ok" if redis_ok else "degraded",
         "redis": redis_ok,
     }
+
 
 @app.get("/voices", response_model=VoicesResponse)
 async def list_voices():
@@ -54,13 +56,18 @@ async def list_voices():
         formats=SUPPORTED_FORMATS,
     )
 
+
 @app.post("/synthesize")
 async def synthesize(request: Request, body: SynthesizeRequest):
     await rate_limiter.check(request)
-    
+
     cached = await cache.get(
-        body.text, body.voice, body.speed,
-        body.volume, body.pitch, body.format,
+        body.text,
+        body.voice,
+        body.speed,
+        body.volume,
+        body.pitch,
+        body.format,
     )
     if cached:
         logger.info(f"Cache hit: voice={body.voice}, len={len(cached)}")
@@ -72,12 +79,12 @@ async def synthesize(request: Request, body: SynthesizeRequest):
                 "X-Cache": "HIT",
             },
         )
-    
+
     logger.info(
         f"Synthesize: voice={body.voice}, speed={body.speed}, "
         f"volume={body.volume}, pitch={body.pitch}, format={body.format}"
     )
-    
+
     try:
         audio_bytes = piper_tts.synthesize(
             text=body.text,
@@ -91,12 +98,17 @@ async def synthesize(request: Request, body: SynthesizeRequest):
         raise HTTPException(status_code=400, detail=str(e))
     except RuntimeError as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
+
     await cache.set(
-        body.text, body.voice, body.speed,
-        body.volume, body.pitch, body.format, audio_bytes,
+        body.text,
+        body.voice,
+        body.speed,
+        body.volume,
+        body.pitch,
+        body.format,
+        audio_bytes,
     )
-    
+
     return Response(
         content=audio_bytes,
         media_type=MEDIA_TYPES[body.format],

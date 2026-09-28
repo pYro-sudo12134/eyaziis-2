@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 
+
 class SynthesizeRequest(BaseModel):
     text: str = Field(..., min_length=1, max_length=5000)
     voice: str = Field(default="ru_RU-irina-medium")
@@ -8,12 +9,14 @@ class SynthesizeRequest(BaseModel):
     pitch: float = Field(default=1.0, ge=0.5, le=2.0)
     format: str = Field(default="mp3", pattern="^(wav|mp3|ogg)$")
 
+
 class VoiceInfo(BaseModel):
     id: str
     name: str
     gender: str
     language: str
     quality: str
+
 
 class VoicesResponse(BaseModel):
     voices: list[VoiceInfo]

@@ -14,5 +14,6 @@ def app_client(tmp_path, monkeypatch):
     monkeypatch.setattr(settings, "TEMPLATES_DIR", templates_dir)
 
     from app.main import app
+
     with TestClient(app) as client:
         yield client

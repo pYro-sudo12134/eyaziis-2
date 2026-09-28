@@ -4,7 +4,7 @@ resource "aws_sqs_queue" "dlq" {
 }
 
 resource "aws_sqs_queue" "this" {
-  for_each = var.queues
+  for_each                   = var.queues
   name                       = "${each.key}-${var.environment}"
   visibility_timeout_seconds = each.value.visibility_timeout
 

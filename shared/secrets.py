@@ -19,10 +19,10 @@ def get_secret(secret_name: str) -> dict:
     if not config.SECRETS_MANAGER_ENABLED:
         logger.info(f"Secrets Manager disabled, skipping: {secret_name}")
         return {}
-    
+
     if secret_name in _cache:
         return _cache[secret_name]
-    
+
     try:
         client = boto3.client(
             "secretsmanager",

@@ -25,17 +25,23 @@ def lambda_handler(event, context):
     status = item.get("status", {}).get("S", "UNKNOWN")
 
     if status == "IN_PROGRESS":
-        return response(200, {
-            "request_id": request_id,
-            "status": "IN_PROGRESS",
-        })
+        return response(
+            200,
+            {
+                "request_id": request_id,
+                "status": "IN_PROGRESS",
+            },
+        )
 
     if status == "FAILED":
-        return response(200, {
-            "request_id": request_id,
-            "status": "FAILED",
-            "error": item.get("error", {}).get("S", "unknown error"),
-        })
+        return response(
+            200,
+            {
+                "request_id": request_id,
+                "status": "FAILED",
+                "error": item.get("error", {}).get("S", "unknown error"),
+            },
+        )
 
     s3_key = item["s3_key"]["S"]
     fmt = item.get("format", {}).get("S", "mp3")
@@ -51,13 +57,16 @@ def lambda_handler(event, context):
         url = url.replace(config.AWS_ENDPOINT_URL, config.AWS_EXTERNAL_ENDPOINT)
 
     logger.info(f"Result ready: {request_id}")
-    return response(200, {
-        "request_id": request_id,
-        "status": "COMPLETED",
-        "audio_url": url,
-        "format": fmt,
-        "text": text,
-    })
+    return response(
+        200,
+        {
+            "request_id": request_id,
+            "status": "COMPLETED",
+            "audio_url": url,
+            "format": fmt,
+            "text": text,
+        },
+    )
 
 
 def response(status_code: int, body: dict) -> dict:

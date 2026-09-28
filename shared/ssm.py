@@ -17,7 +17,7 @@ def get_parameter(name: str) -> str:
     """Читает SSM-параметр с кешированием."""
     if name in _cache:
         return _cache[name]
-    
+
     client = boto3.client(
         "ssm",
         endpoint_url=config.AWS_ENDPOINT_URL,

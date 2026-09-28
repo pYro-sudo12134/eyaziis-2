@@ -42,6 +42,7 @@ def app_client(fake_redis):
     rl_module.rate_limiter._client = fake_redis
 
     from app.main import app
+
     with TestClient(app) as client:
         yield client
 

@@ -23,32 +23,29 @@ SYSTEM_PROMPT = """Ты — помощник по литературе. Отве
 def lambda_handler(event, context):
     command = event.get("command", "synthesize")
     params = event.get("params", {})
-    
+
     if command == "synthesize":
         return build_answer(params.get("text", ""), event, params)
-    
+
     question = params.get("question", params.get("text", ""))
     if not question:
         raise ValueError("question is required")
-    
+
     logger.info(f"Answering: {question[:100]}")
-    
+
     rag_context = ""
     try:
         query_vec = ollama.embed(question)
         hits = qdrant.search(query_vec, top_k=2)
-        rag_context = "\n".join(
-            h["payload"].get("text", "")[:300]
-            for h in hits
-        )
+        rag_context = "\n".join(h["payload"].get("text", "")[:300] for h in hits)
         logger.info(f"RAG: found {len(hits)} documents")
     except Exception as e:
         logger.warning(f"RAG failed: {e}")
-    
+
     user_prompt = question
     if rag_context:
         user_prompt = f"Контекст:\n{rag_context}\n\nВопрос: {question}"
-    
+
     try:
         raw = ollama.chat(
             model=config.OLLAMA_EXECUTE_MODEL,
@@ -62,7 +59,7 @@ def lambda_handler(event, context):
         parsed = json.loads(raw)
     except json.JSONDecodeError as e:
         logger.warning(f"JSON invalid: {e}")
-        text = extract_text(raw) if 'raw' in locals() else question
+        text = extract_text(raw) if "raw" in locals() else question
         parsed = {"text": text}
     except Exception as e:
         logger.warning(f"LLM failed: {e}")
@@ -70,7 +67,7 @@ def lambda_handler(event, context):
 
     logger.info(f"RAG context (first 500 chars): {rag_context[:500]}")
     logger.info(f"User prompt (first 500 chars): {user_prompt[:500]}")
-    
+
     return build_answer(parsed.get("text", ""), event, params, parsed)
 
 
@@ -83,10 +80,10 @@ def extract_text(raw):
 
 def build_answer(text, event, params, parsed=None):
     parsed = parsed or {}
-    
+
     def pick(key, default):
         return parsed.get(key) or params.get(key) or event.get(key) or default
-    
+
     return {
         "text": text,
         "voice": pick("voice", "ru_RU-irina-medium"),

@@ -13,15 +13,15 @@ sfn = get_sfn_client()
 
 def lambda_handler(event, context):
     logger.info(f"Received {len(event.get('Records', []))} records")
-    
+
     state_machine_arn = get_state_machine_arn()
-    
+
     for record in event["Records"]:
         message = json.loads(record["body"])
         request_id = message.get("request_id", "unknown")
-        
+
         logger.info(f"Dispatching request_id={request_id}")
-        
+
         try:
             sfn.start_execution(
                 stateMachineArn=state_machine_arn,
@@ -34,5 +34,5 @@ def lambda_handler(event, context):
             logger.exception(f"Failed to start execution for {request_id}")
             mark_failed(request_id, str(e))
             raise
-    
+
     return {"status": "ok"}

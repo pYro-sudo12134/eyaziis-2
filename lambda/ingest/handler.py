@@ -16,7 +16,7 @@ sqs = get_sqs_client()
 def lambda_handler(event, context):
     path = event.get("path", "")
     logger.info(f"Path: {path}")
-    
+
     try:
         if path == "/ask":
             return handle_text(event)
@@ -32,13 +32,13 @@ def lambda_handler(event, context):
 def handle_text(event):
     body = json.loads(event.get("body") or "{}")
     text = body.get("text", "").strip()
-    
+
     if not text:
         return response(400, {"error": "text is required"})
-    
+
     request_id = str(uuid.uuid4())
     create_request(request_id, "text")
-    
+
     message = {
         "request_id": request_id,
         "input_type": "text",
@@ -49,12 +49,12 @@ def handle_text(event):
         "pitch": float(body.get("pitch", 1.0)),
         "format": body.get("format", "mp3"),
     }
-    
+
     sqs.send_message(
         QueueUrl=config.SQS_INPUT_URL,
         MessageBody=json.dumps(message, ensure_ascii=False),
     )
-    
+
     logger.info(f"Text queued: request_id={request_id}")
     return response(200, {"request_id": request_id})
 
@@ -62,23 +62,23 @@ def handle_text(event):
 def handle_audio(event):
     body = json.loads(event.get("body") or "{}")
     audio_b64 = body.get("audio")
-    
+
     if not audio_b64:
         return response(400, {"error": "audio is required"})
-    
+
     request_id = str(uuid.uuid4())
     create_request(request_id, "audio")
-    
+
     audio_bytes = base64.b64decode(audio_b64)
     s3_key = f"{request_id}.wav"
-    
+
     s3.put_object(
         Bucket=config.S3_AUDIO_INPUT,
         Key=s3_key,
         Body=audio_bytes,
         ContentType="audio/wav",
     )
-    
+
     message = {
         "request_id": request_id,
         "input_type": "audio",
@@ -89,12 +89,12 @@ def handle_audio(event):
         "pitch": float(body.get("pitch", 1.0)),
         "format": body.get("format", "mp3"),
     }
-    
+
     sqs.send_message(
         QueueUrl=config.SQS_INPUT_URL,
         MessageBody=json.dumps(message, ensure_ascii=False),
     )
-    
+
     logger.info(f"Audio queued: request_id={request_id}, key={s3_key}")
     return response(200, {"request_id": request_id})
 

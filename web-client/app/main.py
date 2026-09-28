@@ -28,6 +28,7 @@ templates = Jinja2Templates(directory=str(settings.TEMPLATES_DIR))
 
 # ===== Страницы =====
 
+
 @app.get("/", response_class=HTMLResponse)
 async def page_synthesize(request: Request):
     return templates.TemplateResponse("synthesize.html", {"request": request})
@@ -39,6 +40,7 @@ async def page_recognize(request: Request):
 
 
 # ===== Прокси к API Gateway =====
+
 
 @app.post("/api/ask")
 async def api_ask(body: dict):

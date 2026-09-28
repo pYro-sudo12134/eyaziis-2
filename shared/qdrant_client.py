@@ -10,17 +10,17 @@ class QdrantClient:
     def __init__(self, base_url: str = None):
         self.base_url = base_url or config.QDRANT_URL
         self.collection = config.QDRANT_COLLECTION
-    
+
     def _headers(self) -> dict:
         api_key = get_qdrant_api_key()
         if api_key:
             return {"api-key": api_key}
         return {}
-    
+
     def ensure_collection(self, vector_size: int = 768) -> None:
         url = f"{self.base_url}/collections/{self.collection}"
         response = requests.get(url, headers=self._headers(), timeout=10)
-        
+
         if response.status_code == 404:
             logger.info(f"Creating collection: {self.collection}")
             requests.put(
@@ -34,7 +34,7 @@ class QdrantClient:
                 headers=self._headers(),
                 timeout=30,
             )
-    
+
     def upsert(self, points: list[dict]) -> None:
         url = f"{self.base_url}/collections/{self.collection}/points"
         response = requests.put(
@@ -44,7 +44,7 @@ class QdrantClient:
             timeout=60,
         )
         response.raise_for_status()
-    
+
     def search(self, vector: list[float], top_k: int = 3) -> list[dict]:
         url = f"{self.base_url}/collections/{self.collection}/points/search"
         response = requests.post(

@@ -36,8 +36,8 @@ resource "aws_iam_role_policy" "lambda_policy" {
         Resource = var.sqs_queue_arns
       },
       {
-        Effect = "Allow"
-        Action = ["secretsmanager:GetSecretValue"]
+        Effect   = "Allow"
+        Action   = ["secretsmanager:GetSecretValue"]
         Resource = var.secrets_arns
       },
       {
@@ -49,13 +49,13 @@ resource "aws_iam_role_policy" "lambda_policy" {
         Resource = ["*"]
       },
       {
-        Effect = "Allow"
-        Action = ["states:StartExecution"]
+        Effect   = "Allow"
+        Action   = ["states:StartExecution"]
         Resource = ["*"]
       },
       {
-        Effect = "Allow"
-        Action = ["ssm:GetParameter", "ssm:GetParameters"]
+        Effect   = "Allow"
+        Action   = ["ssm:GetParameter", "ssm:GetParameters"]
         Resource = ["arn:aws:ssm:${var.aws_region}:000000000000:parameter/pipeline/*"]
       },
       {
@@ -98,13 +98,13 @@ resource "aws_iam_role_policy" "sfn_policy" {
     Version = "2012-10-17"
     Statement = [
       {
-        Effect = "Allow"
-        Action = ["lambda:InvokeFunction"]
+        Effect   = "Allow"
+        Action   = ["lambda:InvokeFunction"]
         Resource = ["*"]
       },
       {
-        Effect = "Allow"
-        Action = ["sqs:SendMessage"]
+        Effect   = "Allow"
+        Action   = ["sqs:SendMessage"]
         Resource = ["*"]
       }
     ]

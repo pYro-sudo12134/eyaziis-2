@@ -43,9 +43,9 @@ def lambda_handler(event, context):
     text = event.get("text", "").strip()
     if not text:
         raise ValueError("text is required")
-    
+
     logger.info(f"Formalizing: {text[:100]}")
-    
+
     try:
         raw = ollama.chat(
             model=config.OLLAMA_FORMALIZE_MODEL,
@@ -61,12 +61,12 @@ def lambda_handler(event, context):
     except Exception as e:
         logger.warning(f"Formalization failed: {e}, using fallback")
         parsed = {"command": "synthesize", "params": {"text": text}}
-    
+
     params = parsed.get("params", {})
     for key in ["voice", "speed", "volume", "pitch", "format"]:
         if key in event and key not in params:
             params[key] = event[key]
-    
+
     return {
         "command": parsed.get("command", "synthesize"),
         "params": params,
