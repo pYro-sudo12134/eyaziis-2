@@ -9,3 +9,4 @@ terraform.tfvars
 *.json
 !tmp/*
 *.info
+.pytest_cache
