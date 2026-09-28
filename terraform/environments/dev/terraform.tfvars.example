@@ -1,0 +1,22 @@
+aws_region            = "us-east-1"
+aws_access_key_id     = "test"
+aws_secret_access_key = "test"
+
+aws_endpoint_url          = "http://localhost:4566"
+aws_internal_endpoint     = "http://localstack:4566"
+aws_external_endpoint     = "http://localhost:4566"
+
+environment = "dev"
+
+ollama_url              = "http://ollama:11434"
+ollama_formalize_model  = "qwen2.5:0.5b"
+ollama_execute_model    = "qwen2.5:3b"
+ollama_embed_model      = "nomic-embed-text"
+
+qdrant_url         = "http://qdrant:6333"
+qdrant_collection  = "literature"
+qdrant_api_key     = ""
+
+tts_service_url = "http://tts-service:8000"
+
+transcribe_language = "ru-RU"
