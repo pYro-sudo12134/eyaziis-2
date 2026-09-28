@@ -6,11 +6,9 @@ BUILD_DIR="$ROOT_DIR/build"
 SHARED_DIR="$ROOT_DIR/shared"
 LAMBDA_DIR="$ROOT_DIR/lambda"
 
-# Python-рантайм Lambda
 PYTHON_VERSION="3.11"
 PLATFORM="manylinux2014_x86_64"
 
-# Какие Lambda собирать (аргументы) или все
 LAMBDAS=("$@")
 if [ ${#LAMBDAS[@]} -eq 0 ]; then
     LAMBDAS=($(ls "$LAMBDA_DIR"))
@@ -33,22 +31,18 @@ for LAMBDA_NAME in "${LAMBDAS[@]}"; do
     
     echo "=== Building $LAMBDA_NAME ==="
     
-    # Чистим
     rm -rf "$BUILD_PATH"
     mkdir -p "$BUILD_PATH"
     
-    # Копируем handler.py
     if [ ! -f "$LAMBDA_PATH/handler.py" ]; then
         echo "ERROR: $LAMBDA_PATH/handler.py not found"
         exit 1
     fi
     cp "$LAMBDA_PATH/handler.py" "$BUILD_PATH/handler.py"
     
-    # Копируем shared/
     mkdir -p "$BUILD_PATH/shared"
     cp "$SHARED_DIR"/*.py "$BUILD_PATH/shared/"
     
-    # Устанавливаем зависимости
     if [ -f "$LAMBDA_PATH/requirements.txt" ]; then
         echo "Installing dependencies..."
         pip install \
@@ -62,15 +56,13 @@ for LAMBDA_NAME in "${LAMBDAS[@]}"; do
             --quiet
     fi
     
-    # Упаковываем
     rm -f "$BUILD_DIR/${LAMBDA_NAME}.zip"
     
     if command -v zip > /dev/null 2>&1; then
         (cd "$BUILD_PATH" && zip -rq "$BUILD_DIR/${LAMBDA_NAME}.zip" .)
     else
-        # Fallback: Python zipfile
         python -c "
-import zipfile, os, sys
+import zipfile, os
 build_path = '$BUILD_PATH'
 out_path = '$BUILD_DIR/${LAMBDA_NAME}.zip'
 with zipfile.ZipFile(out_path, 'w', zipfile.ZIP_DEFLATED) as zf:
