@@ -14,7 +14,9 @@ volumes:
 
 services:
   localstack:
-    image: localstack/localstack:latest
+    build:
+      context: ./localstack
+      dockerfile: Dockerfile
     container_name: localstack
     ports:
       - "4566:4566"
@@ -120,3 +122,19 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+
+  web-client:
+    build:
+      context: ./web-client
+      dockerfile: Dockerfile
+    container_name: web-client
+    ports:
+      - "8092:8000"
+    environment:
+      - API_GATEWAY_URL=http://localstack:4566
+      - API_STAGE=dev
+      - API_ID=${API_ID}
+      - TTS_SERVICE_URL=http://tts-service:8000
+    networks:
+      - app-network
+    restart: unless-stopped

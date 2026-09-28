@@ -21,3 +21,7 @@ output "lambda_functions" {
 output "dynamodb_table" {
   value = module.dynamodb.table_name
 }
+
+output "api_id" {
+  value = module.apigateway.api_id
+}

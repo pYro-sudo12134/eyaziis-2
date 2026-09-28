@@ -8,3 +8,4 @@ terraform.tfvars
 *.backup
 *.json
 !tmp/*
+*.info

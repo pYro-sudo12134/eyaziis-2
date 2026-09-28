@@ -25,6 +25,12 @@
           "s3_uri.$": "$.s3_uri"
         }
       },
+      "ResultSelector": {
+        "job_name.$": "$.Payload.job_name",
+        "request_id.$": "$.Payload.request_id",
+        "status.$": "$.Payload.status",
+        "attempts.$": "$.Payload.attempts"
+      },
       "ResultPath": "$.transcription",
       "Next": "WaitForTranscription"
     },
@@ -46,6 +52,14 @@
           "request_id.$": "$.transcription.request_id",
           "attempts.$": "$.transcription.attempts"
         }
+      },
+      "ResultSelector": {
+        "job_name.$": "$.Payload.job_name",
+        "request_id.$": "$.Payload.request_id",
+        "status.$": "$.Payload.status",
+        "attempts.$": "$.Payload.attempts",
+        "transcript_uri.$": "$.Payload.transcript_uri",
+        "error.$": "$.Payload.error"
       },
       "ResultPath": "$.transcription",
       "Next": "IsTranscriptionDone"
@@ -83,6 +97,10 @@
           "job_name.$": "$.transcription.job_name",
           "request_id.$": "$.transcription.request_id"
         }
+      },
+      "ResultSelector": {
+        "text.$": "$.Payload.text",
+        "request_id.$": "$.Payload.request_id"
       },
       "ResultPath": "$.transcription",
       "Next": "MergeTranscript"

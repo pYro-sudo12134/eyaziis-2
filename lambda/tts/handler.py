@@ -14,20 +14,20 @@ sqs = get_sqs_client()
 
 def lambda_handler(event, context):
     logger.info(f"TTS: {len(event.get('Records', []))} records")
-    
+
     for record in event["Records"]:
         message = json.loads(record["body"])
         process(message)
-    
+
     return {"status": "ok"}
 
 
 def process(message):
     text = message["text"]
     request_id = message["request_id"]
-    
+
     logger.info(f"TTS: request_id={request_id}, len={len(text)}")
-    
+
     try:
         response = requests.post(
             f"{config.TTS_SERVICE_URL}/synthesize",
@@ -47,10 +47,10 @@ def process(message):
         logger.exception(f"TTS service failed for {request_id}")
         mark_failed(request_id, str(e))
         raise
-    
+
     fmt = message.get("format", "mp3")
     s3_key = f"{request_id}.{fmt}"
-    
+
     try:
         s3.put_object(
             Bucket=config.S3_AUDIO_OUTPUT,
@@ -62,11 +62,11 @@ def process(message):
         logger.exception(f"S3 put failed for {request_id}")
         mark_failed(request_id, str(e))
         raise
-    
-    mark_completed(request_id, s3_key, fmt)
-    
+
+    mark_completed(request_id, s3_key, fmt, text=text)
+
     logger.info(f"TTS done: s3://{config.S3_AUDIO_OUTPUT}/{s3_key}, size={len(audio_bytes)}")
-    
+
     sqs.send_message(
         QueueUrl=config.SQS_OUTPUT_URL,
         MessageBody=json.dumps({

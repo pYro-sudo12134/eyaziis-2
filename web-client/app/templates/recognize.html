@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Распознавание речи{% endblock %}
+
+{% block content %}
+<h1>Распознавание речи</h1>
+
+<section class="card">
+    <p>Нажмите «Записать», произнесите вопрос — система распознает речь и ответит голосом.</p>
+    <div class="row">
+        <button type="button" id="record-btn" class="primary">🎤 Записать</button>
+        <span id="rec-status" class="status"></span>
+    </div>
+</section>
+
+<section class="card">
+    <h2>Параметры ответа</h2>
+    <div class="grid">
+        <label>Голос
+            <select id="voice">
+                <option value="ru_RU-irina-medium">Ирина (жен.)</option>
+                <option value="ru_RU-dmitri-medium">Дмитрий (муж.)</option>
+            </select>
+        </label>
+    </div>
+</section>
+
+<section class="card" id="result-card" hidden>
+    <h2>Ответ</h2>
+    <p id="answer-text"></p>
+    <audio id="player" controls></audio>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/recognize.js"></script>
+{% endblock %}

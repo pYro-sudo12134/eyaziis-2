@@ -56,25 +56,27 @@ def check_transcription(event):
     job_name = event["job_name"]
     request_id = event.get("request_id", "")
     attempts = event.get("attempts", 0) + 1
-    
+
     response = transcribe.get_transcription_job(TranscriptionJobName=job_name)
     status = response["TranscriptionJob"]["TranscriptionJobStatus"]
-    
+
     logger.info(f"Job {job_name}: status={status}, attempts={attempts}")
-    
+
     result = {
         "job_name": job_name,
         "request_id": request_id,
         "status": status,
         "attempts": attempts,
+        "transcript_uri": None,
+        "error": None,
     }
-    
+
     if status == "COMPLETED":
         result["transcript_uri"] = response["TranscriptionJob"]["Transcript"]["TranscriptFileUri"]
     elif status == "FAILED":
         mark_failed(request_id, "Transcription job failed")
         result["error"] = "Transcription failed"
-    
+
     return result
 
 
