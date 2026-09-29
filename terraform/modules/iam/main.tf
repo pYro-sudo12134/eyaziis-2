@@ -73,6 +73,14 @@ resource "aws_iam_role_policy" "lambda_policy" {
           "dynamodb:UpdateItem",
         ]
         Resource = [var.dynamodb_table_arn]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "sqs:SendMessage", "sqs:ReceiveMessage",
+          "sqs:DeleteMessage", "sqs:GetQueueAttributes"
+        ]
+        Resource = var.sqs_queue_arns
       }
     ]
   })

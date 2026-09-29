@@ -73,10 +73,14 @@ module "sqs" {
 module "iam" {
   source = "../../modules/iam"
 
-  aws_region         = var.aws_region
-  environment        = var.environment
-  s3_bucket_arns     = values(module.s3.bucket_arns)
-  sqs_queue_arns     = values(module.sqs.queue_arns)
+  aws_region     = var.aws_region
+  environment    = var.environment
+  s3_bucket_arns = values(module.s3.bucket_arns)
+  sqs_queue_arns = concat(
+    values(module.sqs.queue_arns),
+    values(module.sqs.dlq_arns),
+    [module.sqs.lambda_dlq_arn],
+  )
   secrets_arns       = values(module.secretsmanager.secret_arns)
   dynamodb_table_arn = module.dynamodb.table_arn
 }
@@ -108,6 +112,7 @@ module "lambda" {
   environment     = var.environment
   lambda_role_arn = module.iam.lambda_role_arn
   build_dir       = "${path.module}/../../../build"
+  lambda_dlq_arn  = module.sqs.lambda_dlq_arn
 
   functions = {
     ingest = {

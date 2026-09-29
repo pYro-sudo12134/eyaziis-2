@@ -10,6 +10,10 @@ variable "build_dir" {
   type = string
 }
 
+variable "lambda_dlq_arn" {
+  type = string
+}
+
 variable "functions" {
   type = map(object({
     handler     = string

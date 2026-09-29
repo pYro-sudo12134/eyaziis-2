@@ -13,3 +13,7 @@ resource "aws_sqs_queue" "this" {
     maxReceiveCount     = each.value.max_receive_count
   })
 }
+
+resource "aws_sqs_queue" "lambda_dlq" {
+  name = "lambda-dlq-${var.environment}"
+}
